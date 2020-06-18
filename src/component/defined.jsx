@@ -1,12 +1,20 @@
 import React from 'react';
 
-function defined(product,productid) {
-    console.log(productid,'got')
+function defined(prod,prodId) {
+    console.log(prod,'got')
+    console.log('got',prodId);
     
-    console.log(productid);
     return (
         <div>
-            kpk
+            {/* <ul>
+                <li>Product name:{i.productName}</li>
+                <li>Product price:{i.price}</li>
+                <li>Product stock:{i.inStock}</li>
+                <li>Product description:{i.shortDescription}</li>
+                <li>Product Review Count:{i.reviewCount}</li>
+                <li>Product Review Rating:{i.reviewRating}</li>
+                         
+            </ul> */}
         </div>
     );
 }

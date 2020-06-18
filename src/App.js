@@ -1,5 +1,5 @@
 import React from 'react';
-import RecipeReviewCard from './component/newcard'
+import RecipeReviewCard from './component/CardView'
 import Defined from './component/defined'
 import Parent from './component/parent'
 import {BrowserRouter as Router,Switch,Route}from 'react-router-dom';
@@ -10,7 +10,7 @@ function App() {
     <div className="App">
       <Switch>
       <Route path="/" exact component={RecipeReviewCard}/>
-      <Route path="/defined" component={Defined}/>
+      <Route path="/detailedView" component={Defined}/>
       <Route path="/parent"  component={Parent} />
       {/* <Parent /> */}
       </Switch>

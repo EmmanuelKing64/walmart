@@ -12,6 +12,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import Defined from './defined';
+import '../component/CardView.css'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -57,7 +58,8 @@ const useStyles = makeStyles((theme) => ({
 export default function SimpleCard({history}) {
   const classes = useStyles();
   const gridClasses = useStylesForGrid();
-  const [productId,setProductId] = React.useState(0);
+  const [productId,setProductid] = React.useState(null);
+  const [sharmi,setSharmi] = React.useState("")
   const [products,setProducts] = React.useState([])
   const [data,setData] = React.useState([])
   const [boolean,setBoolean] = React.useState(false)
@@ -68,7 +70,7 @@ export default function SimpleCard({history}) {
     .then(res =>{
       setData(res.data)
       setProducts(data.products)
-      console.log(products.map(i=>(i.productName)),'check')
+      console.log(products.map(i=>(i)),'check')
       
     })
     .catch(err =>
@@ -78,10 +80,11 @@ export default function SimpleCard({history}) {
   const handleclick=(params)=>{
       console.log('clicked value',params)
       temp1=params;
-      setProductId(temp1)
+      setProductid(params);
+      setSharmi(params)
       setBoolean(!boolean);
       console.log('id value',temp1)
-      console.log('id value',productId)
+      console.log('id value',sharmi)
       history.push('/defined')
   }
   return (<div>
@@ -101,24 +104,24 @@ export default function SimpleCard({history}) {
           </IconButton>
         }
         title={i.productName}
-        subheader="September 14, 2016"
       />      
       <CardMedia
         className={classes.media}
         image='my-app\src\component\no image.png'
       />
       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-          This impressive paella is a perfect party dish and a fun meal to cook together with your
-          guests. Add 1 cup of frozen peas along with the mussels, if you like.
+        <Typography variant="body2" color="textSecondary" component="p">Price:{i.price}
         </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+            In stock: {i.inStock? 'Available':'Unavailable'}
+          </Typography>
       </CardContent>
       </CardActionArea>
         </Card>
         ))}
         </GridList>
         {boolean === true &&
-        <Defined product={products} productid={temp1} />}
+        <Defined prod={products} prodId={temp1} />}
         </div>
   );
 }
