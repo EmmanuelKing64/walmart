@@ -1,26 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import RecipeReviewCard from './component/newcard'
+import Defined from './component/defined'
+import Parent from './component/parent'
+import {BrowserRouter as Router,Switch,Route}from 'react-router-dom';
 
 function App() {
   return (
+    <Router>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Switch>
+      <Route path="/" exact component={RecipeReviewCard}/>
+      <Route path="/defined" component={Defined}/>
+      <Route path="/parent"  component={Parent} />
+      {/* <Parent /> */}
+      </Switch>
     </div>
+    </Router>
   );
 }
+
 
 export default App;
