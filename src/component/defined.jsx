@@ -5,7 +5,7 @@ function defined(prod,prodId) {
     console.log('got',prodId);
     
     return (
-        <div>
+        <div>kmkmk
             {/* <ul>
                 <li>Product name:{i.productName}</li>
                 <li>Product price:{i.price}</li>
@@ -13,7 +13,7 @@ function defined(prod,prodId) {
                 <li>Product description:{i.shortDescription}</li>
                 <li>Product Review Count:{i.reviewCount}</li>
                 <li>Product Review Rating:{i.reviewRating}</li>
-                         
+
             </ul> */}
         </div>
     );
