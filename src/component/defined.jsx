@@ -10,13 +10,11 @@ function Defined({history,location,match,prod,prodId}) {
           dispatch({type:"ACTION",payload:'yes'});
           console.log('Product',value,product)
     },[])
-    console.log(prod,'got')
-    console.log('got',prodId);
-    const temp = prod&&prod.filter(i=>i.productId===prodId);
-    console.log('got2',value&&value.test)
 
     const id = match.params.id;
-        const product = id &&value &&value.entities.find(x=>x['productId'] === id);
+        const dataProducts = value &&value.entities;
+        const productItems = dataProducts &&dataProducts.products;
+        const product = id&& productItems && productItems.find(x=>x['productId'] === id);
       if(product && descriptionRef.current ){
           descriptionRef.current.innerHTML=product.shortDescription
       }
@@ -26,7 +24,7 @@ function Defined({history,location,match,prod,prodId}) {
             <ul>
                 <li>Product name:{product.productName}</li>
                 <li>Product price:{product.price}</li>
-                <li>Product stock:{product.inStock}</li>
+                <li>Product stock:{product.inStock?'Available':'Unavailable'}</li>
                 
                 <li >Product description:<span ref={descriptionRef}></span></li>
                 <li>Product Review Count:{product.reviewCount}</li>

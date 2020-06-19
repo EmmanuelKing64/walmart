@@ -14,6 +14,7 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import Defined from "./defined";
 import { AppContext } from '../store';
 import "../component/CardView.css";
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,12 +59,12 @@ const useStylesForGrid = makeStyles(theme => ({
 export default function SimpleCard({ history }) {
   const classes = useStyles();
   const gridClasses = useStylesForGrid();
-  const [productId, setProductid] = React.useState('test');
-  const [sharmi, setSharmi] = React.useState("");
-  const [products, setProducts] = React.useState([]);
-  const [boolean, setBoolean] = React.useState(false);
+  // const [productId, setProductid] = React.useState('test');
+  // const [sharmi, setSharmi] = React.useState("");
+  // const [products, setProducts] = React.useState([]);
+  // const [boolean, setBoolean] = React.useState(false);
   const {value,dispatch} = React.useContext(AppContext)
-  let temp1 = "";
+  const [page,setPage] = React.useState(1)
 
   async function fetchData() {
     try{
@@ -72,7 +73,7 @@ export default function SimpleCard({ history }) {
       );
       const productData = await response.data;
       const data = productData.products;
-      return data;
+      return productData;
     }
     catch(err){
       console.error('Failed to fetch',err);
@@ -81,15 +82,18 @@ export default function SimpleCard({ history }) {
   }
   React.useEffect(() => {
     const getAllProducts = async ()=>{
-      const list = await fetchData();
+      const data = await fetchData(page);
+     // const list = data.products;
+
       // setProducts(data);
-      if(list){
-        dispatch({type:"SET_PRODUCTS",payload:list});
+      console.log('list',data)
+      if(data){
+        dispatch({type:"SET_PRODUCTS",payload:data});
       }
     }
     // fetchData();
     getAllProducts();
-  }, []);
+  }, [page]);
 
   const handleclick = async id => {
     // console.log("clicked value", params);
@@ -99,7 +103,16 @@ export default function SimpleCard({ history }) {
     // console.log("id value", productId);
     history.push(`/detailedView/${id}`);
   };
-  const entities = value && value.entities;
+ const handlePageChange =(event)=>{
+  //  console.log('event',event)
+  // // console.log('value',value)
+  // setPage(event.target.value);
+ }
+  const dataEntities = value && value.entities;
+  const totalNumber = dataEntities && dataEntities.totalProducts;
+  const pageSize = dataEntities &&  dataEntities.pageSize;
+  console.log('totalNumber',totalNumber)
+  const entities = dataEntities && dataEntities.products
   return (
     <div>
       <GridList cellHeight={180} className={gridClasses.gridList}>
@@ -140,6 +153,7 @@ export default function SimpleCard({ history }) {
             </Card>
           ))}
       </GridList>
+      <Pagination count={Math.floor(totalNumber/pageSize)} page={1} onChange={handlePageChange} />
       </div>
   );
 }
