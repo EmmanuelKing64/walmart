@@ -12,6 +12,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import Defined from "./defined";
+import { AppContext } from '../store';
 import "../component/CardView.css";
 
 const useStyles = makeStyles(theme => ({
@@ -57,43 +58,53 @@ const useStylesForGrid = makeStyles(theme => ({
 export default function SimpleCard({ history }) {
   const classes = useStyles();
   const gridClasses = useStylesForGrid();
-  const [productId, setProductid] = React.useState(null);
+  const [productId, setProductid] = React.useState('test');
   const [sharmi, setSharmi] = React.useState("");
   const [products, setProducts] = React.useState([]);
   const [boolean, setBoolean] = React.useState(false);
+  const {value,dispatch} = React.useContext(AppContext)
   let temp1 = "";
 
   async function fetchData() {
-    const response = await axios.get(
-      "https://mobile-tha-server-8ba57.firebaseapp.com/walmartproducts/1/8"
-    );
-    const productData = await response.data;
-    const data = productData.products;
-    setProducts(data);
+    try{
+      const response = await axios.get(
+        "https://mobile-tha-server-8ba57.firebaseapp.com/walmartproducts/1/8"
+      );
+      const productData = await response.data;
+      const data = productData.products;
+      return data;
+    }
+    catch(err){
+      console.error('Failed to fetch',err);
+      return null;
+    }
   }
   React.useEffect(() => {
-    fetchData();
+    const getAllProducts = async ()=>{
+      const list = await fetchData();
+      // setProducts(data);
+      if(list){
+        dispatch({type:"SET_PRODUCTS",payload:list});
+      }
+    }
+    // fetchData();
+    getAllProducts();
   }, []);
 
-  React.useEffect(()=>{
-    console.log('see here',sharmi)
-  },[sharmi])
-
-  const handleclick = params => {
-    console.log("clicked value", params);
-    temp1 = params;
-    setProductid(params);
-    setSharmi(params);
-    setBoolean(!boolean);
-    console.log("id value", temp1);
-    console.log("id value", sharmi);
-    history.push("/defined");
+  const handleclick = async id => {
+    // console.log("clicked value", params);
+    // temp1 = params;
+    // await setProductid("test123");
+    // await setBoolean(!boolean);
+    // console.log("id value", productId);
+    history.push(`/detailedView/${id}`);
   };
+  const entities = value && value.entities;
   return (
     <div>
       <GridList cellHeight={180} className={gridClasses.gridList}>
-        {products &&
-          products.map(i => (
+        {entities &&
+          entities.map(i => (
             <Card className={classes.root}>
               <CardActionArea onClick={() => handleclick(i.productId)}>
                 <CardHeader
@@ -129,7 +140,6 @@ export default function SimpleCard({ history }) {
             </Card>
           ))}
       </GridList>
-      {boolean === true && <Defined prod={products} prodId={temp1} />}
-    </div>
+      </div>
   );
 }
