@@ -10,12 +10,13 @@ const reducer = (state = initialState, action) => {
       console.log("action is called");
       return { ...state, keyProducts: payload };
     case "SET_PRODUCTS":
-      return { ...state, entities: payload };
+      return { ...state, entities: payload};
     default:
       console.log("Unknown action");
   }
 };
 function App() {
+  console.log('app')
   const [value, dispatch] = useReducer(reducer);
   return (
     <AppContext.Provider value={{ value, dispatch }}>

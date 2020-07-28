@@ -11,149 +11,174 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import CardActionArea from "@material-ui/core/CardActionArea";
-import Defined from "./defined";
-import { AppContext } from '../store';
+import { AppContext } from "../store";
 import "../component/CardView.css";
-import Pagination from '@material-ui/lab/Pagination';
+import Skeleton from "@material-ui/lab/Skeleton";
+import TablePagination from "@material-ui/core/TablePagination";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
-    height: 300
+    //height: 300
   },
   media: {
-    height: 0,
-    paddingTop: "56.25%" // 16:9
+    height: 57,
+    // paddingTop: "56.25%" // 16:9
+  },
+  content: {
+    height: 100,
   },
   expand: {
     transform: "rotate(0deg)",
     marginLeft: "auto",
     transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
+      duration: theme.transitions.duration.shortest,
+    }),
   },
   expandOpen: {
-    transform: "rotate(180deg)"
+    transform: "rotate(180deg)",
   },
   avatar: {
-    backgroundColor: red[500]
-  }
+    backgroundColor: red[500],
+  },
 }));
-const useStylesForGrid = makeStyles(theme => ({
+const useStylesForGrid = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "space-around",
     overflow: "hidden",
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
   },
   gridList: {
-    width: 1200,
-    height: 650
+    // width: 1200,
+    // height: 650
   },
   icon: {
-    color: "rgba(255, 255, 255, 0.54)"
-  }
+    color: "rgba(255, 255, 255, 0.54)",
+  },
 }));
+
+let loading = true;
+let error = "";
+export async function fetchData(page, rowsPerPage) {
+  console.log("page1", page, rowsPerPage);
+  try {
+    const response = await axios.get(
+      `https://mobile-tha-server-8ba57.firebaseapp.com/walmartproducts/${
+        page + 1
+      }/${rowsPerPage}`
+    );
+    const productData = await response.data;
+    const data = productData.products;
+    loading = false;
+    error = "";
+    return productData;
+  } catch (err) {
+    console.error("Failed to fetch", err);
+    loading = true;
+    error = "Failed to fetch";
+    return null;
+  }
+}
 
 export default function SimpleCard({ history }) {
   const classes = useStyles();
   const gridClasses = useStylesForGrid();
-  // const [productId, setProductid] = React.useState('test');
-  // const [sharmi, setSharmi] = React.useState("");
-  // const [products, setProducts] = React.useState([]);
-  // const [boolean, setBoolean] = React.useState(false);
-  const {value,dispatch} = React.useContext(AppContext)
-  const [page,setPage] = React.useState(1)
+  const [rowsPerPage, setRowsPerPage] = React.useState(8);
 
-  async function fetchData() {
-    try{
-      const response = await axios.get(
-        "https://mobile-tha-server-8ba57.firebaseapp.com/walmartproducts/1/8"
-      );
-      const productData = await response.data;
-      const data = productData.products;
-      return productData;
-    }
-    catch(err){
-      console.error('Failed to fetch',err);
-      return null;
-    }
-  }
+  const { value, dispatch } = React.useContext(AppContext);
+  const [page, setPage] = React.useState(0);
+
   React.useEffect(() => {
-    const getAllProducts = async ()=>{
-      const data = await fetchData(page);
-     // const list = data.products;
-
-      // setProducts(data);
-      console.log('list',data)
-      if(data){
-        dispatch({type:"SET_PRODUCTS",payload:data});
+    const getAllProducts = async () => {
+      console.log("page", page);
+      const data = await fetchData(page, rowsPerPage);
+      console.log("list", data);
+      if (data && error === "") {
+        dispatch({ type: "SET_PRODUCTS", payload: data });
+      } else {
+        alert(error);
       }
-    }
-    // fetchData();
+    };
     getAllProducts();
-  }, [page]);
+  }, [page, error, rowsPerPage]);
 
-  const handleclick = async id => {
-    // console.log("clicked value", params);
-    // temp1 = params;
-    // await setProductid("test123");
-    // await setBoolean(!boolean);
-    // console.log("id value", productId);
+  const handleclick = async (id) => {
     history.push(`/detailedView/${id}`);
   };
- const handlePageChange =(event)=>{
-  //  console.log('event',event)
-  // // console.log('value',value)
-  // setPage(event.target.value);
- }
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
   const dataEntities = value && value.entities;
   const totalNumber = dataEntities && dataEntities.totalProducts;
-  const pageSize = dataEntities &&  dataEntities.pageSize;
-  console.log('totalNumber',totalNumber)
-  const entities = dataEntities && dataEntities.products
+  const pageSize = dataEntities && dataEntities.pageSize;
+  console.log("totalNumber", totalNumber);
+  //console.log('loading',value&& value.loading)
+  const entities = dataEntities && dataEntities.products;
   return (
     <div>
-      <GridList cellHeight={180} className={gridClasses.gridList}>
-        {entities &&
-          entities.map(i => (
-            <Card className={classes.root}>
-              <CardActionArea onClick={() => handleclick(i.productId)}>
-                <CardHeader
-                  avatar={<Avatar className={classes.avatar}>R</Avatar>}
-                  action={
-                    <IconButton aria-label="settings">
-                      {/* <MoreVertIcon /> */}
-                    </IconButton>
-                  }
-                  title={i.productName}
-                />
-                <CardMedia
-                  className={classes.media}
-                  image="my-app\src\component\no image.png"
-                />
-                <CardContent>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    Price:{i.price}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    In stock: {i.inStock ? "Available" : "Unavailable"}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
-      </GridList>
-      <Pagination count={Math.floor(totalNumber/pageSize)} page={1} onChange={handlePageChange} />
-      </div>
+      {loading ? (
+        <div>
+          <Skeleton animation="wave" />
+          <Skeleton animation="wave" />
+          <Skeleton animation="wave" />
+          <Skeleton animation="wave" />
+        </div>
+      ) : (
+        <GridList spacing={10} className={gridClasses.gridList}>
+          {entities &&
+            entities.map((i) => (
+              <Card className={classes.root}>
+                <CardActionArea onClick={() => handleclick(i.productId)}>
+                  <CardHeader
+                    avatar={<Avatar className={classes.avatar}>WM</Avatar>}
+                    action={
+                      <IconButton aria-label="settings">
+                        {/* <MoreVertIcon /> */}
+                      </IconButton>
+                    }
+                    title={i.productName}
+                  />
+                  <CardMedia
+                    className={classes.media}
+                    image="my-app\src\component\no image.png"
+                  />
+                  <CardContent>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      Price:{i.price}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      In stock: {i.inStock ? "Available" : "Unavailable"}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            ))}
+        </GridList>
+      )}
+      <TablePagination
+        component="div"
+        rowsPerPageOptions={[1, 2, 3, 4, 5, 6, 7, 8]}
+        count={60}
+        page={page}
+        onChangePage={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </div>
   );
 }
