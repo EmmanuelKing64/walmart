@@ -1,4 +1,7 @@
-.MuiCard-root{
+.card-root{
+    max-width:345px;
     margin: 2px;
+    height: 350px!important;
 }
+
 /* MuiPaper-root MuiCard-root makeStyles-root-1 MuiPaper-elevation1 MuiPaper-rounded */

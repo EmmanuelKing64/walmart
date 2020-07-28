@@ -1,3 +1,8 @@
 .defined-card{
     background-color: #e0cfcf;
+    max-width: 50%;
+}
+.defined-media{
+    height: 200px;
+    max-width: 345px;
 }

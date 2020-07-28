@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     //height: 300
   },
   media: {
-    height: 57,
+    height: 200,
     // paddingTop: "56.25%" // 16:9
   },
   content: {
@@ -134,7 +134,7 @@ export default function SimpleCard({ history }) {
         <GridList spacing={10} className={gridClasses.gridList}>
           {entities &&
             entities.map((i) => (
-              <Card className={classes.root}>
+              <Card className="card-root">
                 <CardActionArea onClick={() => handleclick(i.productId)}>
                   <CardHeader
                     avatar={<Avatar className={classes.avatar}>WM</Avatar>}
@@ -147,7 +147,7 @@ export default function SimpleCard({ history }) {
                   />
                   <CardMedia
                     className={classes.media}
-                    image="my-app\src\component\no image.png"
+                    image={`https://mobile-tha-server-8ba57.firebaseapp.com${i.productImage}`}
                   />
                   <CardContent>
                     <Typography
